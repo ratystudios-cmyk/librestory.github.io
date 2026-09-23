@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="iCkOvi286s0Jy1HLBLwTpNgAZE4tStmQDO8VR9XQFyk" />
+    <title>LibreBlog - Raty Studios apps</title
+	
+	# el  tituli google añade un icono de libro ala web
+	<meta property="og:site_name" content=" Libreblog Publica tu libro" />
+	
+  <!-- Tu descripción buena que mencionas -->
+    <meta name="description" content="Comienza su aventura publica tus propias historias cuentos libros asta romanse" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1120;
+            color: #f8fafc;
+            user-select: none;
+        }
+
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-lora { font-family: 'Lora', serif; }
+        .font-hand { font-family: 'Caveat', cursive; }
+
+        /* Pantalla de Carga Premium */
+        @keyframes floatingBook {
+            0%, 100% { transform: translateY(0) rotate(-2deg); filter: drop-shadow(0 0 20px rgba(217, 119, 6, 0.4)); }
+            50% { transform: translateY(-20px) rotate(2deg); filter: drop-shadow(0 0 40px rgba(217, 119, 6, 0.8)); }
+        }
+        .animate-floating { animation: floatingBook 2.5s ease-in-out infinite; }
+
+        /* Lector - Libro Cerrado */
+        .perspective-container { perspective: 2000px; }
+        .book-cover-3d {
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.8s;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            box-shadow: 25px 25px 50px rgba(0,0,0,0.8), inset 4px 0 10px rgba(255,255,255,0.3);
+        }
+        .book-cover-3d.open-anim {
+            transform: rotateY(-135deg) scale(0.95);
+            opacity: 0;
+        }
+        .book-spine {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 25px;
+            background: linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.4) 100%);
+            border-top-left-radius: 4px; border-bottom-left-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Lector - Cuaderno Vertical */
+        .notebook-page {
+            background-color: #fcfcfc;
+            background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 100% 2rem;
+            background-position: 0 1.5rem;
+            color: #1e293b;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.05), 15px 15px 35px rgba(0,0,0,0.3);
+            border-radius: 4px 12px 12px 4px;
+            border-left: 1px solid #d1d5db;
+            position: relative;
+            transform-origin: left center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+        }
+        .notebook-page::before {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 30px;
+            width: 2px; background: rgba(239, 68, 68, 0.3); /* Línea roja de margen */
+        }
+
+        /* Animación de Pasar Página (Cuaderno) */
+        @keyframes turnNotebookPage {
+            0% { transform: rotateY(0deg); opacity: 1; }
+            45% { transform: rotateY(-90deg); opacity: 0; }
+            55% { transform: rotateY(90deg); opacity: 0; }
+            100% { transform: rotateY(0deg); opacity: 1; }
+        }
+        .page-turning { animation: turnNotebookPage 0.6s ease-in-out forwards; }
+
+        /* Estilos de texto para el creador */
+        .texto-corrido { white-space: normal; line-height: 2rem; }
+        .texto-separado { white-space: pre-line; line-height: 2rem; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
+
+    <!-- PANTALLA DE CARGA -->
+    <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-1000">
+        <div class="relative mb-10 animate-floating">
+            <div class="w-32 h-44 bg-gradient-to-br from-amber-700 to-amber-900 rounded-r-2xl rounded-l-md shadow-[0_20px_50px_rgba(217,119,6,0.3)] flex items-center justify-center border-l-4 border-amber-950 relative overflow-hidden">
+                <div class="absolute inset-0 bg-black/20"></div>
+                <i class="fa-solid fa-book-journal-whills text-amber-200/90 text-6xl drop-shadow-lg z-10"></i>
+            </div>
+            <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-4 bg-amber-500/30 rounded-full blur-xl"></div>
+        </div>
+        <h1 class="font-cinzel text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 tracking-wider mb-2 drop-shadow-sm">LibreBlog</h1>
+        <p class="text-amber-500/70 text-xs tracking-[0.3em] font-bold uppercase mb-8">Raty Studios apps</p>
+        <div class="w-64 h-1 bg-slate-800 rounded-full overflow-hidden shadow-inner">
+            <div id="splash-progress" class="h-full bg-gradient-to-r from-amber-600 to-amber-400 w-0 transition-all duration-[4000ms] ease-out rounded-full"></div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="main-app" class="opacity-0 transition-opacity duration-700 flex flex-col min-h-screen">
+        
+        <header class="glass-panel sticky top-0 z-40 px-4 lg:px-12 py-3 shadow-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchView('library')">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-600/30 group-hover:scale-105 transition">
+                        <i class="fa-solid fa-feather-pointed text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-cinzel text-xl font-bold text-amber-400 tracking-wide">LibreBlog</span>
+                        <span class="block text-[9px] text-slate-400 font-bold tracking-widest uppercase">Raty Studios apps</span>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex items-center flex-1 max-w-lg mx-8">
+                    <div class="relative w-full">
+                        <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="search-input" oninput="filterBooks()" placeholder="Buscar obras de arte..." class="w-full bg-slate-900/50 border border-slate-700/50 rounded-full pl-12 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500/70 transition backdrop-blur-sm">
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <div id="user-info" class="hidden items-center space-x-3 glass-panel px-3 py-1.5 rounded-full">
+                        <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/30"><i class="fa-solid fa-user-astronaut"></i></div>
+                        <span id="current-username" class="text-sm font-semibold text-slate-200 pr-2"></span>
+                    </div>
+                    <button onclick="switchView('dashboard')" class="hidden md:flex items-center space-x-2 text-slate-300 hover:text-amber-400 font-semibold text-sm px-3 transition"><i class="fa-solid fa-layer-group"></i> <span>Dashboard</span></button>
+                    <button onclick="openPublishModal()" class="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-amber-600/25 transition transform hover:-translate-y-0.5 flex items-center space-x-2"><i class="fa-solid fa-pen-nib"></i> <span class="hidden sm:inline">Escribir</span></button>
+                    <button onclick="logoutUser()" title="Salir" class="text-slate-500 hover:text-red-400 p-2 transition"><i class="fa-solid fa-right-from-bracket text-lg"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <!-- AUTH MODAL -->
+        <div id="auth-modal" class="fixed inset-0 z-[60] bg-slate-950/90 flex items-center justify-center p-4 hidden backdrop-blur-md">
+            <div class="glass-panel rounded-3xl p-8 max-w-sm w-full shadow-2xl relative overflow-hidden border border-slate-700/50">
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl"></div>
+                <div class="text-center mb-8 relative z-10">
+                    <div class="w-20 h-20 bg-gradient-to-br from-amber-500 to-amber-700 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg shadow-amber-600/30 transform rotate-3"><i class="fa-solid fa-book-journal-whills"></i></div>
+                    <h2 class="font-cinzel text-2xl font-bold text-slate-100">Acceso a LibreBlog</h2>
+                </div>
+                <form onsubmit="handleAuth(event)" class="space-y-4 relative z-10">
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="auth-username" required placeholder="Nombre de usuario" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                        <input type="password" id="auth-password" required placeholder="Contraseña" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-amber-600/20 mt-2">Entrar / Registrarse</button>
+                    <p class="text-xs text-center text-slate-500 mt-4">Si la cuenta no existe, se creará automáticamente.</p>
+                </form>
+            </div>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-12 py-8">
+            <div class="flex items-center space-x-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
+                <button onclick="filterCategory('all')" id="cat-all" class="category-btn active px-5 py-2.5 rounded-full text-sm font-bold bg-amber-600 text-white transition shrink-0 shadow-md">Todos</button>
+                <button onclick="filterCategory('Romance')" id="cat-Romance" class="category-btn glass-panel px-5 py-2.5 rounded-full text-sm font-bold text-slate-300 hover:text-white transition shrink-0"><i class="fa-solid fa-heart text-rose-400 mr-2"></i>Romance</button>
+                <button onclick="filterCategory('Historia de amor')" id="cat-Historia de amor" class="category-btn glass-panel px-5 py-2.5 rounded-full text-sm font-bold text-slate-300 hover:text-white transition shrink-0"><i class="fa-solid fa-ring text-amber-300 mr-2"></i>Historia de amor</button>
+                <button onclick="filterCategory('Biblia')" id="cat-Biblia" class="category-btn glass-panel px-5 py-2.5 rounded-full text-sm font-bold text-slate-300 hover:text-white transition shrink-0"><i class="fa-solid fa-cross mr-2"></i>Religión</button>
+                <button onclick="filterCategory('Ficción')" id="cat-Ficción" class="category-btn glass-panel px-5 py-2.5 rounded-full text-sm font-bold text-slate-300 hover:text-white transition shrink-0"><i class="fa-solid fa-dragon mr-2"></i>Ficción</button>
+                <button onclick="filterCategory('Ciencia')" id="cat-Ciencia" class="category-btn glass-panel px-5 py-2.5 rounded-full text-sm font-bold text-slate-300 hover:text-white transition shrink-0">Ciencia</button>
+                <button onclick="filterCategory('Tecnología')" id="cat-Tecnología" class="category-btn glass-panel px-5 py-2.5 rounded-full text-sm font-bold text-slate-300 hover:text-white transition shrink-0">Tecnología</button>
+            </div>
+
+            <!-- BIBLIOTECA -->
+            <div id="view-library">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="font-cinzel text-3xl font-bold text-white drop-shadow-md">Descubre Obras</h2>
+                    <span id="book-count" class="text-xs font-bold px-4 py-1.5 glass-panel rounded-full text-amber-400">0 Obras</span>
+                </div>
+                <div id="books-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6"></div>
+            </div>
+
+            <!-- DASHBOARD -->
+            <div id="view-dashboard" class="hidden">
+                <div class="glass-panel rounded-2xl p-6 mb-8 flex justify-between items-center border border-amber-500/20 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h2 class="font-cinzel text-3xl font-bold text-white mb-1">Mi Dashboard</h2>
+                        <p class="text-slate-400 text-sm">Gestiona tus creaciones maestras</p>
+                    </div>
+                    <button onclick="openPublishModal()" class="bg-amber-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-amber-600/30 relative z-10"><i class="fa-solid fa-plus mr-2"></i>Nueva Obra</button>
+                    <i class="fa-solid fa-compass-drafting absolute -right-4 -bottom-4 text-8xl text-amber-500/5 z-0"></i>
+                </div>
+                <div id="my-books-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6"></div>
+            </div>
+        </main>
+
+        <!-- LECTOR DE LIBRO REALISTA (CUADERNO VERTICAL) -->
+        <div id="reader-modal" class="fixed inset-0 z-[70] bg-slate-950/90 hidden flex flex-col items-center justify-center p-4 backdrop-blur-xl perspective-container">
+            
+            <!-- VISTA 1: LIBRO CERRADO -->
+            <div id="closed-book-view" class="flex flex-col items-center justify-center w-full transition-all duration-1000 group">
+                <div class="relative w-64 h-[400px] sm:w-72 sm:h-[450px] rounded-r-2xl rounded-l-sm book-cover-3d cursor-pointer shadow-[20px_20px_60px_rgba(0,0,0,0.8)]" onclick="openBookPages()">
+                    <div class="book-spine"></div>
+                    <img id="closed-book-cover" src="" class="w-full h-full object-cover rounded-r-2xl rounded-l-sm brightness-90 group-hover:brightness-110 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40 rounded-r-2xl rounded-l-sm flex flex-col justify-between p-6 text-center border border-white/10">
+                        <span id="closed-book-cat" class="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-400 border border-amber-400/30 py-1 px-2 rounded backdrop-blur self-center mt-2">Categoria</span>
+                        <h2 id="closed-book-title" class="font-cinzel text-3xl font-black text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] leading-tight">Título del Libro</h2>
+                        <span id="closed-book-author" class="font-hand text-2xl text-slate-300 drop-shadow-md">Autor</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6 mt-12">
+                    <button onclick="closeReader()" class="px-6 py-3 rounded-full glass-panel text-slate-300 font-bold hover:text-white transition">Volver</button>
+                    <button onclick="openBookPages()" class="px-8 py-3 rounded-full bg-amber-600 hover:bg-amber-500 text-white font-bold shadow-[0_0_30px_rgba(217,119,6,0.5)] transition transform hover:scale-105 flex items-center space-x-2"><i class="fa-solid fa-book-open"></i><span>Leer Obra</span></button>
+                </div>
+            </div>
+
+            <!-- VISTA 2: CUADERNO ABIERTO (VERTICAL) -->
+            <div id="opened-book-view" class="hidden w-full h-[95vh] flex-col items-center justify-center transition-all duration-700 opacity-0 relative">
+                
+                <div class="absolute top-4 left-4 z-50">
+                    <button onclick="backToCover()" class="glass-panel text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition flex items-center space-x-2 font-bold text-sm shadow-lg"><i class="fa-solid fa-arrow-left"></i><span>Cerrar</span></button>
+                </div>
+
+                <!-- Contenedor del Cuaderno -->
+                <div id="word-page-container" class="notebook-page w-full max-w-[500px] h-full max-h-[800px] flex flex-col relative overflow-hidden my-auto">
+                    
+                    <!-- Header del cuaderno -->
+                    <div class="h-16 shrink-0 flex items-end justify-between px-12 pb-2 border-b border-rose-500/20">
+                        <span id="reader-doc-title" class="font-hand text-2xl font-bold text-slate-800 truncate pr-4">Título</span>
+                        <span id="page-indicator" class="font-lora text-sm font-bold text-slate-400">Pág. 1</span>
+                    </div>
+                    
+                    <!-- Área de lectura -->
+                    <div id="reader-page-content" class="flex-1 overflow-y-auto pl-12 pr-8 py-6 font-lora text-[17px] text-slate-800">
+                        <!-- El texto se inyecta aquí. Las clases de formato se manejan en JS -->
+                    </div>
+
+                    <!-- Paginación -->
+                    <div class="h-16 shrink-0 bg-white/50 backdrop-blur flex justify-between items-center px-8 border-t border-slate-200">
+                        <button onclick="prevPage()" id="prev-page-btn" class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-amber-100 hover:text-amber-700 transition disabled:opacity-30 shadow"><i class="fa-solid fa-chevron-left"></i></button>
+                        <span id="page-counter-bottom" class="text-xs font-bold tracking-widest text-slate-400 uppercase">1 / 1</span>
+                        <button onclick="nextPage()" id="next-page-btn" class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-amber-100 hover:text-amber-700 transition disabled:opacity-30 shadow"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="absolute bottom-4 text-slate-400 text-xs font-bold tracking-widest uppercase">Presiona ENTER para pasar página</div>
+            </div>
+        </div>
+
+        <!-- MODAL CREADOR DE OBRAS (PANTALLA DIVIDIDA) -->
+        <div id="publish-modal" class="fixed inset-0 z-[80] bg-slate-950/95 hidden flex items-center justify-center p-2 sm:p-6 backdrop-blur-lg">
+            <div class="w-full max-w-6xl h-[90vh] glass-panel rounded-3xl overflow-hidden flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-slate-700/50">
+                
+                <div class="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between bg-slate-900/50">
+                    <h3 id="publish-modal-title" class="font-cinzel font-bold text-2xl text-amber-400 flex items-center"><i class="fa-solid fa-pen-fancy mr-3"></i> Estudio de Creación</h3>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="closePublishModal()" class="text-slate-400 font-bold hover:text-white px-4 py-2">Cancelar</button>
+                        <button onclick="saveBook(event)" class="bg-gradient-to-r from-amber-600 to-amber-500 text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-amber-600/20">Publicar Obra</button>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+                    
+                    <!-- LADO IZQUIERDO: LIBRO CERRADO -->
+                    <div class="w-full md:w-2/5 p-8 bg-slate-900/30 overflow-y-auto border-r border-slate-700/50 flex flex-col items-center">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 w-full">Portada y Metadatos</h4>
+                        
+                        <input type="hidden" id="edit-book-id">
+                        
+                        <div class="w-48 h-72 rounded-r-xl rounded-l-sm bg-slate-800 border-l-8 border-slate-900 shadow-2xl relative mb-6 group overflow-hidden">
+                            <img id="cover-preview" src="" class="w-full h-full object-cover hidden">
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition cursor-pointer" onclick="document.getElementById('book-cover-file').click()">
+                                <i class="fa-solid fa-camera text-3xl text-white"></i>
+                            </div>
+                            <input type="file" id="book-cover-file" accept="image/*" onchange="handleCoverUpload(event)" class="hidden">
+                            <input type="hidden" id="book-cover-url" required>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mb-6 uppercase tracking-wider">Clic para subir portada</p>
+
+                        <div class="w-full space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Título de la Obra</label>
+                                <input type="text" id="book-title" required class="w-full bg-slate-950/50 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 font-cinzel font-bold focus:border-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Categoría</label>
+                                <select id="book-category" required class="w-full bg-slate-950/50 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 outline-none focus:border-amber-500">
+                                    <option value="Romance">Romance</option>
+                                    <option value="Historia de amor">Historia de amor</option>
+                                    <option value="Biblia">La Biblia / Religión</option>
+                                    <option value="Ficción">Ficción y Fantasía</option>
+                                    <option value="Ciencia">Ciencia y Arte</option>
+                                    <option value="Tecnología">Tecnología</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LADO DERECHO: HOJA DE CUADERNO -->
+                    <div class="w-full md:w-3/5 p-6 sm:p-10 bg-slate-800/20 flex flex-col items-center overflow-y-auto relative">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 w-full max-w-lg">Contenido (Páginas)</h4>
+                        
+                        <!-- Hoja de cuaderno editor -->
+                        <div class="notebook-page w-full max-w-lg min-h-[500px] flex flex-col rounded-xl overflow-hidden shadow-2xl">
+                            <div class="h-14 bg-white/80 border-b border-rose-500/20 px-8 flex justify-between items-center shrink-0">
+                                <span class="font-bold text-sm text-slate-500" id="editor-page-indicator">Editando Página 1</span>
+                                <select id="editor-text-format" class="text-xs bg-slate-100 border-none rounded px-2 py-1 text-slate-600 outline-none font-bold" onchange="updateEditorFormat()">
+                                    <option value="texto-separado">Normal (Separado)</option>
+                                    <option value="texto-corrido">Texto Corrido</option>
+                                </select>
+                            </div>
+                            
+                            <textarea id="editor-textarea" oninput="saveCurrentPageText()" placeholder="Escribe tu historia aquí..." class="flex-1 w-full bg-transparent resize-none outline-none pl-12 pr-6 py-4 font-lora text-lg text-slate-800 texto-separado leading-loose" style="background-image: linear-gradient(#e5e7eb 1px, transparent 1px); background-size: 100% 2rem; background-position: 0 1.5rem;"></textarea>
+                            
+                            <div class="h-14 bg-white border-t border-slate-200 px-6 flex justify-between items-center shrink-0">
+                                <div class="flex space-x-2">
+                                    <button type="button" onclick="editorPrevPage()" class="w-8 h-8 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+                                    <button type="button" onclick="editorNextPage()" class="w-8 h-8 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center"><i class="fa-solid fa-arrow-right"></i></button>
+                                </div>
+                                <button type="button" onclick="editorAddPage()" class="text-xs font-bold bg-amber-100 text-amber-700 px-3 py-1.5 rounded hover:bg-amber-200 transition"><i class="fa-solid fa-plus mr-1"></i>Nueva Hoja</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="glass-panel py-6 px-6 text-center text-xs text-slate-400 mt-12 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-2"><span class="font-cinzel font-bold text-amber-400 text-sm">LibreBlog</span><span>&bull;</span><span>Creado por IA Gemini y mikenny</span></div>
+                <div class="text-amber-500/80 font-bold uppercase tracking-[0.2em]">Raty Studios apps</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- FIREBASE SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, update, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCKvNViTMiARSW5sa5BoIZmF9cm7XL9bQY",
+            authDomain: "raty-studios-servers.firebaseapp.com",
+            databaseURL: "https://raty-studios-servers-default-rtdb.firebaseio.com",
+            projectId: "raty-studios-servers",
+            storageBucket: "raty-studios-servers.firebasestorage.app",
+            messagingSenderId: "1033991074708",
+            appId: "1:1033991074708:web:b39be9e157b357cd94d581"
+        };
+        const app = initializeApp(firebaseConfig);
+        window.db = getDatabase(app);
+        window.dbRef = { ref, set, get, update, remove, push };
+        
+        initApp();
+    </script>
+
+    <script>
+        // ANTI-ROBO
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key.toLowerCase() === 'u')) {
+                e.preventDefault(); alert("Código protegido por Raty Studios apps."); return false;
+            }
+            // Lógica ENTER para pasar página del cuaderno
+            if (!document.getElementById('opened-book-view').classList.contains('hidden')) {
+                if (e.key === 'Enter' || e.key === 'ArrowRight') nextPage();
+                if (e.key === 'ArrowLeft') prevPage();
+            }
+        });
+
+        // AUDIO
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBookSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            if (type === 'turn') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+            } else if (type === 'close') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        let currentUser = null, allBooks = [], currentFilter = 'all', currentActiveBook = null, currentReaderPage = 0;
+        let editorPages = [""], currentEditorIndex = 0;
+
+        const defaultBooks = {
+            "b1": { title: "Romeo y Julieta", category: "Romance", author: "Raty Studios", format: "texto-separado", cover: "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=600", pages: ["En la hermosa Verona, donde situamos nuestra escena..."] },
+            "b2": { title: "Cartas a la Luna", category: "Historia de amor", author: "Poeta Anónimo", format: "texto-corrido", cover: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600", pages: ["Querida Luna, hoy te escribo porque eres la única que conoce el secreto de mi corazón..."] }
+        };
+
+        async function initApp() {
+            setTimeout(() => { document.getElementById('splash-progress').style.width = '100%'; }, 50);
+            setTimeout(async () => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; document.getElementById('main-app').style.opacity = '1'; }, 1000);
+
+                const localSession = JSON.parse(localStorage.getItem('libreblog_session'));
+                if (localSession && localSession.username && localSession.token) {
+                    currentUser = localSession.username;
+                    document.getElementById('user-info').style.display = 'flex';
+                    document.getElementById('current-username').innerText = currentUser;
+                } else {
+                    document.getElementById('auth-modal').classList.remove('hidden');
+                }
+                await loadBooksFromFirebase();
+            }, 4000);
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            const un = document.getElementById('auth-username').value.trim();
+            const pw = document.getElementById('auth-password').value.trim();
+            if (!un || !pw) return;
+
+            const userRef = window.dbRef.ref(window.db, 'users/' + un);
+            const snapshot = await window.dbRef.get(userRef);
+            
+            if (snapshot.exists()) {
+                if (snapshot.val().password !== pw) return alert("Contraseña incorrecta");
+            } else {
+                await window.dbRef.set(userRef, { username: un, password: pw, joined: Date.now() });
+            }
+
+            currentUser = un;
+            localStorage.setItem('libreblog_session', JSON.stringify({ username: un, token: pw }));
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('user-info').style.display = 'flex';
+            document.getElementById('current-username').innerText = currentUser;
+            await loadBooksFromFirebase();
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('libreblog_session'); currentUser = null;
+            document.getElementById('auth-modal').classList.remove('hidden');
+            document.getElementById('user-info').style.display = 'none';
+        }
+
+        async function loadBooksFromFirebase() {
+            const snap = await window.dbRef.get(window.dbRef.ref(window.db, 'books'));
+            if (!snap.exists()) {
+                await window.dbRef.set(window.dbRef.ref(window.db, 'books'), defaultBooks);
+                allBooks = Object.keys(defaultBooks).map(id => ({ id, ...defaultBooks[id] }));
+            } else {
+                const data = snap.val(); allBooks = Object.keys(data).map(id => ({ id, ...data[id] }));
+            }
+            renderBooks();
+        }
+
+        function renderBooks() {
+            const searchVal = document.getElementById('search-input')?.value.toLowerCase() || '';
+            let filtered = allBooks.filter(b => (currentFilter === 'all' || b.category === currentFilter) && b.title.toLowerCase().includes(searchVal));
+            document.getElementById('book-count').innerText = `${filtered.length} Obras`;
+
+            document.getElementById('books-grid').innerHTML = filtered.map(b => `
+                <div onclick="openReader('${b.id}')" class="glass-panel rounded-xl overflow-hidden cursor-pointer hover:border-amber-500/50 hover:scale-[1.02] transition duration-300 shadow-xl group">
+                    <div class="h-56 relative"><img src="${b.cover}" class="w-full h-full object-cover brightness-90 group-hover:brightness-110 transition"><div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div></div>
+                    <div class="p-4 absolute bottom-0 w-full"><h3 class="font-cinzel font-bold text-white leading-tight drop-shadow-md text-sm sm:text-base">${b.title}</h3><p class="text-[10px] text-amber-400 font-bold uppercase tracking-widest">${b.category}</p></div>
+                </div>`).join('');
+
+            document.getElementById('my-books-grid').innerHTML = allBooks.filter(b => b.author === currentUser).map(b => `
+                <div class="glass-panel rounded-xl overflow-hidden shadow-xl border border-slate-700/50">
+                    <div class="h-40 relative"><img src="${b.cover}" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40"></div><h3 class="absolute bottom-2 left-3 font-cinzel font-bold text-white text-sm">${b.title}</h3></div>
+                    <div class="p-3 flex justify-between bg-slate-900/80"><button onclick="editBook('${b.id}')" class="text-xs bg-slate-800 text-amber-400 px-3 py-1.5 rounded font-bold hover:bg-slate-700">Editar</button><button onclick="deleteBook('${b.id}')" class="text-xs bg-red-500/20 text-red-400 px-3 py-1.5 rounded font-bold hover:bg-red-500/30">Borrar</button></div>
+                </div>`).join('');
+        }
+
+        function switchView(v) {
+            document.getElementById('view-library').classList.toggle('hidden', v !== 'library');
+            document.getElementById('view-dashboard').classList.toggle('hidden', v !== 'dashboard');
+        }
+
+        function filterCategory(cat) { currentFilter = cat; renderBooks(); }
+        function filterBooks() { renderBooks(); }
+
+        /* LECTOR CUADERNO */
+        function openReader(id) {
+            currentActiveBook = allBooks.find(b => b.id === id); if (!currentActiveBook) return;
+            currentReaderPage = 0;
+            document.getElementById('closed-book-title').innerText = currentActiveBook.title;
+            document.getElementById('closed-book-author').innerText = currentActiveBook.author || 'Anónimo';
+            document.getElementById('closed-book-cat').innerText = currentActiveBook.category;
+            document.getElementById('closed-book-cover').src = currentActiveBook.cover;
+            
+            document.getElementById('reader-modal').classList.remove('hidden');
+            document.getElementById('closed-book-view').classList.remove('hidden', 'open-anim');
+            document.getElementById('opened-book-view').classList.add('hidden', 'opacity-0');
+        }
+
+        function openBookPages() {
+            playBookSound('turn');
+            const cv = document.getElementById('closed-book-view'); cv.classList.add('open-anim');
+            setTimeout(() => {
+                cv.classList.add('hidden');
+                const ov = document.getElementById('opened-book-view'); ov.classList.remove('hidden');
+                setTimeout(() => { ov.classList.remove('opacity-0'); updateReaderContent(); }, 50);
+            }, 800);
+        }
+
+        function backToCover() {
+            playBookSound('close');
+            const ov = document.getElementById('opened-book-view'); ov.classList.add('opacity-0');
+            setTimeout(() => {
+                ov.classList.add('hidden'); const cv = document.getElementById('closed-book-view'); cv.classList.remove('hidden');
+                setTimeout(() => cv.classList.remove('open-anim'), 50);
+            }, 500);
+        }
+
+        function closeReader() { playBookSound('close'); document.getElementById('reader-modal').classList.add('hidden'); }
+
+        function updateReaderContent() {
+            const pages = currentActiveBook.pages || [""];
+            document.getElementById('reader-doc-title').innerText = currentActiveBook.title;
+            document.getElementById('page-indicator').innerText = `Pág. ${currentReaderPage + 1}`;
+            document.getElementById('page-counter-bottom').innerText = `${currentReaderPage + 1} / ${pages.length}`;
+            
+            const contentEl = document.getElementById('reader-page-content');
+            contentEl.innerText = pages[currentReaderPage]; // Seguro
+            contentEl.className = `flex-1 overflow-y-auto pl-12 pr-8 py-6 font-lora text-[17px] text-slate-800 ${currentActiveBook.format || 'texto-separado'}`;
+            
+            document.getElementById('prev-page-btn').disabled = currentReaderPage === 0;
+            document.getElementById('next-page-btn').disabled = currentReaderPage === pages.length - 1;
+        }
+
+        function turnPageAnim(cb) {
+            playBookSound('turn');
+            const p = document.getElementById('word-page-container'); p.classList.add('page-turning');
+            setTimeout(cb, 300); setTimeout(() => p.classList.remove('page-turning'), 600);
+        }
+
+        function nextPage() { if (currentReaderPage < currentActiveBook.pages.length - 1) turnPageAnim(() => { currentReaderPage++; updateReaderContent(); }); }
+        function prevPage() { if (currentReaderPage > 0) turnPageAnim(() => { currentReaderPage--; updateReaderContent(); }); }
+
+        /* CREADOR SPLIT */
+        function updateEditorUI() {
+            document.getElementById('editor-page-indicator').innerText = `Hoja ${currentEditorIndex + 1} de ${editorPages.length}`;
+            document.getElementById('editor-textarea').value = editorPages[currentEditorIndex];
+        }
+        function saveCurrentPageText() { editorPages[currentEditorIndex] = document.getElementById('editor-textarea').value; }
+        function editorNextPage() { if (currentEditorIndex < editorPages.length - 1) { currentEditorIndex++; updateEditorUI(); } }
+        function editorPrevPage() { if (currentEditorIndex > 0) { currentEditorIndex--; updateEditorUI(); } }
+        function editorAddPage() { editorPages.push(""); currentEditorIndex = editorPages.length - 1; updateEditorUI(); }
+        function updateEditorFormat() { document.getElementById('editor-textarea').className = `flex-1 w-full bg-transparent resize-none outline-none pl-12 pr-6 py-4 font-lora text-lg text-slate-800 leading-loose ${document.getElementById('editor-text-format').value}`; }
+
+        function openPublishModal(b = null) {
+            document.getElementById('publish-modal').classList.remove('hidden');
+            if (b) {
+                document.getElementById('publish-modal-title').innerHTML = '<i class="fa-solid fa-pen-fancy mr-3"></i> Editar Obra';
+                document.getElementById('edit-book-id').value = b.id;
+                document.getElementById('book-title').value = b.title;
+                document.getElementById('book-category').value = b.category;
+                document.getElementById('book-cover-url').value = b.cover;
+                document.getElementById('cover-preview').src = b.cover;
+                document.getElementById('cover-preview').classList.remove('hidden');
+                document.getElementById('editor-text-format').value = b.format || 'texto-separado';
+                editorPages = b.pages ? [...b.pages] : [""];
+            } else {
+                document.getElementById('publish-modal-title').innerHTML = '<i class="fa-solid fa-pen-fancy mr-3"></i> Crear Nueva Obra';
+                document.getElementById('edit-book-id').value = '';
+                document.getElementById('book-title').value = '';
+                document.getElementById('book-cover-url').value = '';
+                document.getElementById('cover-preview').classList.add('hidden');
+                editorPages = [""];
+            }
+            currentEditorIndex = 0; updateEditorFormat(); updateEditorUI();
+        }
+        function closePublishModal() { document.getElementById('publish-modal').classList.add('hidden'); }
+
+        function handleCoverUpload(e) {
+            const f = e.target.files[0]; if (!f) return;
+            const r = new FileReader();
+            r.onload = ev => {
+                document.getElementById('book-cover-url').value = ev.target.result;
+                document.getElementById('cover-preview').src = ev.target.result;
+                document.getElementById('cover-preview').classList.remove('hidden');
+            };
+            r.readAsDataURL(f);
+        }
+
+        async function saveBook(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-book-id').value, title = document.getElementById('book-title').value.trim();
+            const cat = document.getElementById('book-category').value, cov = document.getElementById('book-cover-url').value;
+            saveCurrentPageText(); // Asegurar guardado de texto
+            const cleanPages = editorPages.filter(p => p.trim() !== '');
+
+            if (!title) return alert("Ponle un título en el cuaderno izquierdo.");
+            if (!cov) return alert("Sube una portada dando clic a la izquierda.");
+            if (cleanPages.length === 0) return alert("Escribe algo en la hoja.");
+
+            const data = { title, category: cat, cover: cov, author: currentUser, format: document.getElementById('editor-text-format').value, pages: cleanPages };
+            if (id) await window.dbRef.update(window.dbRef.ref(window.db, 'books/' + id), data);
+            else await window.dbRef.set(window.dbRef.push(window.dbRef.ref(window.db, 'books')), data);
+            
+            closePublishModal(); await loadBooksFromFirebase(); switchView('library');
+        }
+
+        function editBook(id) { openPublishModal(allBooks.find(b => b.id === id)); }
+        async function deleteBook(id) { if(confirm("¿Borrar obra?")) { await window.dbRef.remove(window.dbRef.ref(window.db, 'books/'+id)); await loadBooksFromFirebase(); } }
+    </script>
+</body>
+</html>
